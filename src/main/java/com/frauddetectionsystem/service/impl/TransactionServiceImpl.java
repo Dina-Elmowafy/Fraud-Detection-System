@@ -1,8 +1,9 @@
-package com.frauddetectionsystem.Service.impl;
+package com.frauddetectionsystem.service.impl;
 
 import com.frauddetectionsystem.DTO.TransactionRequestDTO;
 import com.frauddetectionsystem.DTO.TransactionResponseDTO;
-import com.frauddetectionsystem.Service.TransactionService;
+import com.frauddetectionsystem.exception.InsufficientFundsException;
+import com.frauddetectionsystem.service.TransactionService;
 import com.frauddetectionsystem.exception.FraudDetectedException;
 import com.frauddetectionsystem.fraud.FraudCheckContext;
 import com.frauddetectionsystem.fraud.FraudDetectionEngine;
@@ -45,14 +46,19 @@ public class TransactionServiceImpl implements TransactionService {
             }
         }
 
-        AccountModel senderAccount = accountRepo.findByAccountNumber(senderAccountNumber)
+        AccountModel senderAccount = accountRepo.findForUpdateByAccountNumber(senderAccountNumber)
                 .orElseThrow(() -> new RuntimeException("Sender account not found!"));
 
-        AccountModel receiverAccount = accountRepo.findByAccountNumber(requestDTO.getReceiverAccountNumber())
+        AccountModel receiverAccount = accountRepo.findForUpdateByAccountNumber(requestDTO.getReceiverAccountNumber())
                 .orElseThrow(() -> new RuntimeException("Receiver account not found"));
-
+        if (senderAccountNumber.equals(requestDTO.getReceiverAccountNumber())) {
+            throw new RuntimeException("Sender and receiver accounts cannot be the same");
+        }
+        if (!senderAccount.isActive()) {
+            throw new RuntimeException("Sender account is inactive and cannot perform transactions");
+        }
         if (senderAccount.getBalance().compareTo(requestDTO.getAmount())<0 ) {
-            throw new RuntimeException("Insufficient funds");
+            throw new InsufficientFundsException("Insufficient funds");
         }
         FraudCheckContext context = new FraudCheckContext(senderAccountNumber, requestDTO);
         String fraudRule =fraudDetectionEngine.checkForFraud(context);
@@ -60,7 +66,7 @@ public class TransactionServiceImpl implements TransactionService {
 
             TransactionModel transaction = transactionMapper.toEntity(requestDTO);
             transaction.setTransactionStatus("FRAUD_SUSPECTED");
-            transaction.setTransactionDate(java.time.LocalDateTime.now());
+            transaction.setTransactionDate(LocalDateTime.now());
             transaction.setSender(senderAccount);
             transaction.setReceiver(receiverAccount);
 

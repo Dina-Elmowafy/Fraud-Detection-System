@@ -1,11 +1,10 @@
-package com.frauddetectionsystem.Controller;
+package com.frauddetectionsystem.controller;
 
 import com.frauddetectionsystem.DTO.AccountRequestDTO;
 import com.frauddetectionsystem.DTO.AccountResponseDTO;
-import com.frauddetectionsystem.Service.AccountService;
+import com.frauddetectionsystem.service.AccountService;
 import com.frauddetectionsystem.mapper.AccountMapper;
 import com.frauddetectionsystem.model.AccountModel;
-import com.frauddetectionsystem.repo.AccountRepo;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;

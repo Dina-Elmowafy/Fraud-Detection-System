@@ -1,6 +1,4 @@
 package com.frauddetectionsystem.fraud;
-
-import com.frauddetectionsystem.DTO.TransactionRequestDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

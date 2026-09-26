@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -25,7 +26,8 @@ public class TransactionModel {
     @ManyToOne
     @JoinColumn(name = "receiver_id", nullable = false)
     private AccountModel receiver;
-    private double amount;
+    @Column(precision = 19, scale = 2)
+    private BigDecimal amount;
     private String transactionType;
     private LocalDateTime transactionDate;
     private String transactionStatus;
