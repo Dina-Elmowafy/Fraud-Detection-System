@@ -9,9 +9,9 @@ import java.util.List;
 @RequiredArgsConstructor
 public class FraudDetectionEngine {
     private final List<FraudRule> rules;
-    public String checkForFraud(TransactionRequestDTO requestDTO) {
+    public String checkForFraud(FraudCheckContext context) {
         for(FraudRule rule: rules ){
-            if(rule.isFraudulent(requestDTO)){
+            if(rule.isFraudulent(context)){
                 return rule.getFraudReason();
             }
         }

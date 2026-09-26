@@ -1,13 +1,12 @@
 package com.frauddetectionsystem.fraud;
 
-import com.frauddetectionsystem.DTO.TransactionRequestDTO;
 import org.springframework.stereotype.Component;
 
 @Component
 public class HighAmountFraudRule implements FraudRule{
     @Override
-    public boolean isFraudulent(TransactionRequestDTO requestDTO) {
-        return requestDTO.getAmount().compareTo(new java.math.BigDecimal("10000")) > 0;
+    public boolean isFraudulent(FraudCheckContext context) {
+        return context.getRequestDTO().getAmount().compareTo(new java.math.BigDecimal("10000")) > 0;
     }
 
     @Override

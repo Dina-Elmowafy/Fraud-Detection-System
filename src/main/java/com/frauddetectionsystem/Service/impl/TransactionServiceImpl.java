@@ -4,6 +4,7 @@ import com.frauddetectionsystem.DTO.TransactionRequestDTO;
 import com.frauddetectionsystem.DTO.TransactionResponseDTO;
 import com.frauddetectionsystem.Service.TransactionService;
 import com.frauddetectionsystem.exception.FraudDetectedException;
+import com.frauddetectionsystem.fraud.FraudCheckContext;
 import com.frauddetectionsystem.fraud.FraudDetectionEngine;
 import com.frauddetectionsystem.mapper.TransactionMapper;
 import com.frauddetectionsystem.model.AccountModel;
@@ -15,7 +16,6 @@ import com.frauddetectionsystem.repo.AuditLogRepo;
 import com.frauddetectionsystem.repo.FraudAlertRepo;
 import com.frauddetectionsystem.repo.TransactionRepo;
 import lombok.RequiredArgsConstructor;
-import org.springframework.boot.data.autoconfigure.web.DataWebProperties;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -37,11 +37,11 @@ public class TransactionServiceImpl implements TransactionService {
 
     @Override
     @Transactional(noRollbackFor = FraudDetectedException.class)
-    public TransactionModel processTransaction(String senderAccountNumber, TransactionRequestDTO requestDTO) {
+    public TransactionResponseDTO processTransaction(String senderAccountNumber, TransactionRequestDTO requestDTO) {
         if(requestDTO.getIdempotencyKey() != null){
             Optional<TransactionModel>existingTransaction=transactionRepo.findByIdempotencyKey(requestDTO.getIdempotencyKey());
             if(existingTransaction.isPresent()){
-                return existingTransaction.get();
+                return transactionMapper.toDto(existingTransaction.get());
             }
         }
 
@@ -54,7 +54,8 @@ public class TransactionServiceImpl implements TransactionService {
         if (senderAccount.getBalance().compareTo(requestDTO.getAmount())<0 ) {
             throw new RuntimeException("Insufficient funds");
         }
-        String fraudRule =fraudDetectionEngine.checkForFraud(requestDTO);
+        FraudCheckContext context = new FraudCheckContext(senderAccountNumber, requestDTO);
+        String fraudRule =fraudDetectionEngine.checkForFraud(context);
         if (fraudRule!=null) {
 
             TransactionModel transaction = transactionMapper.toEntity(requestDTO);
@@ -102,7 +103,7 @@ public class TransactionServiceImpl implements TransactionService {
         successLog.setTransactionId(savedTransaction.getTransactionId());
         auditLogRepo.save(successLog);
 
-        return savedTransaction;
+        return transactionMapper.toDto(savedTransaction);
     }
 
 
@@ -110,5 +111,18 @@ public class TransactionServiceImpl implements TransactionService {
     public Page<TransactionResponseDTO> getAllTransactions(Pageable pageable) {
         Page <TransactionModel> transactionModelPage =transactionRepo.findAll(pageable);
         return transactionModelPage.map(transactionMapper::toDto);
+    }
+
+    @Override
+    public TransactionResponseDTO getTransactionById(String transactionId) {
+        return transactionRepo.findByTransactionId(transactionId).
+                map(transactionMapper::toDto).
+                orElseThrow(() -> new RuntimeException("Transaction not found!"));
+    }
+
+    @Override
+    public Page<TransactionResponseDTO> getTransactionsByAccount(String accountNumber, Pageable pageable) {
+        return transactionRepo.findByAccount(accountNumber,pageable)
+                .map(transactionMapper::toDto);
     }
 }

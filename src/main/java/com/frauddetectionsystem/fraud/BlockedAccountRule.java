@@ -1,13 +1,12 @@
 package com.frauddetectionsystem.fraud;
 
-import com.frauddetectionsystem.DTO.TransactionRequestDTO;
 import org.springframework.stereotype.Component;
 
 @Component
 public class BlockedAccountRule implements FraudRule{
     @Override
-    public boolean isFraudulent(TransactionRequestDTO requestDTO) {
-        if("111".equals(requestDTO.getReceiverAccountNumber())){
+    public boolean isFraudulent(FraudCheckContext context) {
+        if("111".equals(context.getRequestDTO().getReceiverAccountNumber())){
             return true;
         }
      return false;

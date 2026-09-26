@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Setter
 @Getter
@@ -22,7 +23,7 @@ public class TransactionModel {
     @JoinColumn(name = "sender_id", nullable = false)
     private AccountModel sender;
     @ManyToOne
-    @JoinColumn(name = "receiver_id" , nullable = false)
+    @JoinColumn(name = "receiver_id", nullable = false)
     private AccountModel receiver;
     private double amount;
     private String transactionType;
@@ -32,5 +33,10 @@ public class TransactionModel {
     @Column(unique = true)
     private String idempotencyKey;
 
-
+    @PrePersist
+    public void generateTransactionId() {
+        if (this.transactionId == null) {
+            this.transactionId = UUID.randomUUID().toString();
+        }
+    }
 }
