@@ -1,9 +1,6 @@
 package com.frauddetectionsystem.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.*;
 
 import java.math.BigDecimal;
@@ -17,11 +14,13 @@ public class AccountModel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @Column(unique = true, nullable = false)
     private String accountNumber;
     private String userName;
     private String password;
     private boolean active;
     private BigDecimal balance;
+    private String status;
 
     public AccountModel(String accountNumber, String userName, String password, boolean active, BigDecimal balance) {
         this.accountNumber = accountNumber;

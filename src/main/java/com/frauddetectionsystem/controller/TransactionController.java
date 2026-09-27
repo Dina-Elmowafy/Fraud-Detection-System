@@ -28,9 +28,9 @@ public class TransactionController {
     public Page<TransactionResponseDTO> getAllTransactions(Pageable pageable) {
         return transactionService.getAllTransactions(pageable);
     }
-    @GetMapping("{id}")
-    public TransactionResponseDTO getTransactionById(@PathVariable String id) {
-        return  transactionService.getTransactionById(id);
+    @GetMapping("{transactionId}")
+    public TransactionResponseDTO getTransactionById(@PathVariable("transactionId") String transactionId) {
+        return  transactionService.getTransactionById(transactionId);
     }
     @GetMapping("/account/{accountNumber}")
     public Page<TransactionResponseDTO> getTransactionsByAccount(@PathVariable("accountNumber") String accountNumber, Pageable pageable){

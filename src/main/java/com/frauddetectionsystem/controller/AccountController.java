@@ -3,14 +3,10 @@ package com.frauddetectionsystem.controller;
 import com.frauddetectionsystem.DTO.AccountRequestDTO;
 import com.frauddetectionsystem.DTO.AccountResponseDTO;
 import com.frauddetectionsystem.service.AccountService;
-import com.frauddetectionsystem.mapper.AccountMapper;
-import com.frauddetectionsystem.model.AccountModel;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/accounts")
@@ -18,11 +14,12 @@ import org.springframework.web.bind.annotation.RestController;
 public class AccountController {
 
     private final AccountService accountService;
-    private final AccountMapper accountMapper;
 
-    @PostMapping("/add")
+
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
     public AccountResponseDTO createAccount(@Valid @RequestBody AccountRequestDTO requestDTO) {
-        AccountModel savedAccount = accountService.addAccount(requestDTO);
-        return accountMapper.toResponseDto(savedAccount);
+
+        return accountService.addAccount(requestDTO);
     }
 }

@@ -12,4 +12,6 @@ public interface AccountMapper {
 
         AccountModel toEntity(AccountRequestDTO requestDTO);
         AccountResponseDTO toResponseDto(AccountModel accountModel);
+
+
 }

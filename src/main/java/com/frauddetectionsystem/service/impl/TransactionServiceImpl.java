@@ -39,13 +39,18 @@ public class TransactionServiceImpl implements TransactionService {
     @Override
     @Transactional(noRollbackFor = FraudDetectedException.class)
     public TransactionResponseDTO processTransaction(String senderAccountNumber, TransactionRequestDTO requestDTO) {
-        if(requestDTO.getIdempotencyKey() != null){
-            Optional<TransactionModel>existingTransaction=transactionRepo.findByIdempotencyKey(requestDTO.getIdempotencyKey());
-            if(existingTransaction.isPresent()){
-                return transactionMapper.toDto(existingTransaction.get());
+        if(requestDTO.getIdempotencyKey() != null) {
+            Optional<TransactionModel> existingTransaction = transactionRepo.findByIdempotencyKeyAndSender(requestDTO.getIdempotencyKey(), senderAccountNumber);
+            if (existingTransaction.isPresent()) {
+                TransactionModel ifItFraud = existingTransaction.get();
+
+                if ("FRAUD_SUSPECTED".equals(ifItFraud.getTransactionStatus())) {
+                    throw new FraudDetectedException("Duplicate attempt for a suspected fraudulent transaction.");
+
+                }
+                return transactionMapper.toDto(ifItFraud);
             }
         }
-
         AccountModel senderAccount = accountRepo.findForUpdateByAccountNumber(senderAccountNumber)
                 .orElseThrow(() -> new RuntimeException("Sender account not found!"));
 
@@ -82,7 +87,7 @@ public class TransactionServiceImpl implements TransactionService {
             AuditLogModel auditLog = new AuditLogModel();
             auditLog.setActionType("FRAUD_DETECTED");
             auditLog.setActionDetails("Blocked transfer from " +senderAccountNumber +" to "+
-                    requestDTO.getReceiverAccountNumber() +"Reason"+fraudRule);
+                    requestDTO.getReceiverAccountNumber() +" Reason: "+fraudRule);
             auditLog.setActionDate(LocalDateTime.now());
             auditLog.setTransactionId(savedTransaction.getTransactionId());
             auditLogRepo.save(auditLog);
