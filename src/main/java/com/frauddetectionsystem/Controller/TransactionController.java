@@ -3,9 +3,6 @@ package com.frauddetectionsystem.Controller;
 import com.frauddetectionsystem.DTO.TransactionRequestDTO;
 import com.frauddetectionsystem.DTO.TransactionResponseDTO;
 import com.frauddetectionsystem.Service.TransactionService;
-import com.frauddetectionsystem.mapper.TransactionMapper;
-import com.frauddetectionsystem.model.TransactionModel;
-import com.frauddetectionsystem.repo.TransactionRepo;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -19,21 +16,25 @@ public class TransactionController {
 
 
     private final TransactionService transactionService;
-    private final TransactionMapper transactionMapper;
+
 
     @PostMapping("/{senderAccountNumber}/process")
     public TransactionResponseDTO processTransaction
             ( @PathVariable String senderAccountNumber,@Valid  @RequestBody TransactionRequestDTO requestDTO) {
-           TransactionModel savedTransaction = transactionService.processTransaction(senderAccountNumber, requestDTO);
-            return transactionMapper.toDto(savedTransaction);
+           return transactionService.processTransaction(senderAccountNumber, requestDTO);
 
     }
     @GetMapping
     public Page<TransactionResponseDTO> getAllTransactions(Pageable pageable) {
         return transactionService.getAllTransactions(pageable);
     }
-
-
-
+    @GetMapping("{id}")
+    public TransactionResponseDTO getTransactionById(@PathVariable String id) {
+        return  transactionService.getTransactionById(id);
+    }
+    @GetMapping("/account/{accountNumber}")
+    public Page<TransactionResponseDTO> getTransactionsByAccount(@PathVariable("accountNumber") String accountNumber, Pageable pageable){
+        return transactionService.getTransactionsByAccount(accountNumber, pageable);
+    }
 
 }
