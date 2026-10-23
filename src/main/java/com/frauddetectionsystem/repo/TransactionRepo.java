@@ -12,9 +12,9 @@ import java.util.Optional;
 
 public interface TransactionRepo extends JpaRepository<TransactionModel,Long> {
 
-    Optional<TransactionModel>findByIdempotencyKey (String idempotencyKey);
+    Optional<TransactionModel>findByIdempotencyKeyAndSender (String idempotencyKey,String sender);
     Optional<TransactionModel> findByTransactionId(String transactionId);
     @Query("SELECT t FROM TransactionModel t WHERE t.sender.accountNumber = :accountNumber OR t.receiver.accountNumber = :accountNumber")
     Page<TransactionModel> findByAccount(@Param("accountNumber") String accountNumber, Pageable pageable);
-    long countBySender_AccountNumberAndTransactionDateAfter(String accountNumber, LocalDateTime timeLimit);
+    long countBySender_AccountNumberAndTransactionDateAfterAndTransactionStatus(String accountNumber, LocalDateTime timeLimit, String status);
 }

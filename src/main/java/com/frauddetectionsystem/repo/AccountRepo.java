@@ -10,8 +10,10 @@ import org.springframework.data.jpa.repository.Query;
 
 public interface AccountRepo extends JpaRepository<AccountModel,Long> {
 
-   Optional<AccountModel> findByAccountNumber(String accountNumber);
+   boolean existsByAccountNumber(String accountNumber);
    @Lock(LockModeType.PESSIMISTIC_WRITE)
    @Query("SELECT a FROM AccountModel a WHERE a.accountNumber = :accountNumber")
    Optional<AccountModel> findForUpdateByAccountNumber(String accountNumber);
+
+
 }

@@ -13,8 +13,8 @@ public class VelocityRule implements FraudRule{
     @Override
     public boolean isFraudulent(FraudCheckContext context) {
         LocalDateTime fiveMinutesAgo = LocalDateTime.now().minusMinutes(5);
-        long recentTransactions = transactionRepo.countBySender_AccountNumberAndTransactionDateAfter(
-                context.getSenderAccountNumber(),fiveMinutesAgo);
+        long recentTransactions = transactionRepo.countBySender_AccountNumberAndTransactionDateAfterAndTransactionStatus(
+                context.getSenderAccountNumber(),fiveMinutesAgo,"SUCCESS");
 
         return recentTransactions >=3;
     }
