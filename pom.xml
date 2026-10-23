@@ -102,6 +102,14 @@
 
         <!-- ==================== Tests ==================== -->
 
+        <!-- JUnit, Mockito, and common Spring test support -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+
         <!-- JPA Tests -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
