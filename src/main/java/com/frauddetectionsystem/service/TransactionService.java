@@ -1,4 +1,4 @@
-package com.frauddetectionsystem.Service;
+package com.frauddetectionsystem.service;
 
 import com.frauddetectionsystem.DTO.TransactionRequestDTO;
 import com.frauddetectionsystem.DTO.TransactionResponseDTO;

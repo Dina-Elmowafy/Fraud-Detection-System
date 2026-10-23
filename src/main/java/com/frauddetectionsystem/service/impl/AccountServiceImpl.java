@@ -1,7 +1,7 @@
-package com.frauddetectionsystem.Service.impl;
+package com.frauddetectionsystem.service.impl;
 
 import com.frauddetectionsystem.DTO.AccountRequestDTO;
-import com.frauddetectionsystem.Service.AccountService;
+import com.frauddetectionsystem.service.AccountService;
 import com.frauddetectionsystem.mapper.AccountMapper;
 import com.frauddetectionsystem.model.AccountModel;
 import com.frauddetectionsystem.repo.AccountRepo;
@@ -28,7 +28,7 @@ public class AccountServiceImpl implements AccountService {
     public AccountModel addAccount(AccountRequestDTO requestDTO) {
         isAccountNumberExists(requestDTO.getAccountNumber());
         AccountModel  newAccount= accountMapper.toEntity(requestDTO);
-        newAccount.setIsactive(true);
+        newAccount.setActive(true);
          return accountRepo.save(newAccount);
     }
 

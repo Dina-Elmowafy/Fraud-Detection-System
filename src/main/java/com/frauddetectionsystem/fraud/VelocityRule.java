@@ -3,9 +3,7 @@ package com.frauddetectionsystem.fraud;
 import com.frauddetectionsystem.repo.TransactionRepo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 
 @RequiredArgsConstructor
 @Component

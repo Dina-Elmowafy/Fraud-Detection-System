@@ -8,7 +8,8 @@ import lombok.*;
 
 import java.math.BigDecimal;
 
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
@@ -19,14 +20,14 @@ public class AccountModel {
     private String accountNumber;
     private String userName;
     private String password;
-    private boolean isactive;
+    private boolean active;
     private BigDecimal balance;
 
-    public AccountModel(String accountNumber, String userName, String password, boolean isactive, BigDecimal balance) {
+    public AccountModel(String accountNumber, String userName, String password, boolean active, BigDecimal balance) {
         this.accountNumber = accountNumber;
         this.userName = userName;
         this.password = password;
-        this.isactive = isactive;
+        this.active = active;
         this.balance = balance;
     }
 }

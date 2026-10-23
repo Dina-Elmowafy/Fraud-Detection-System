@@ -1,7 +1,7 @@
 package com.frauddetectionsystem.exception;
 
+import com.frauddetectionsystem.model.AccountModel;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -10,8 +10,24 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import java.util.HashMap;
 import java.util.Map;
 
-@RestControllerAdvice(basePackages = "com.frauddetectionsystem.Controller")
+@RestControllerAdvice
 public class GlobalExceptionHandler {
+    @ExceptionHandler(AccountNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public Map<String,String>handleAccountNotFound(AccountNotFoundException e){
+        Map<String,String> response = new HashMap<>();
+        response.put("error", "Not Found");
+        response.put("message", e.getMessage());
+        return response;
+    }
+    @ExceptionHandler(InsufficientFundsException.class)
+    @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
+    public Map<String,String> insufficientFunds(InsufficientFundsException e){
+        Map<String,String> response = new HashMap<>();
+        response.put("error", "Unprocessable Entity");
+        response.put("message", e.getMessage());
+        return response;
+    }
     @ExceptionHandler(RuntimeException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public Map<String,String> handleRuntimeException (RuntimeException e) {
@@ -36,13 +52,15 @@ public class GlobalExceptionHandler {
     public Map<String, String> handleGeneralExceptions(Exception ex) {
         Map<String, String> errorResponse = new HashMap<>();
         errorResponse.put("message", "An unexpected error occurred. Please try again later.");
-        errorResponse.put("details", ex.getMessage());
         return errorResponse;
     }
 
 
     @ExceptionHandler(FraudDetectedException.class)
-    public ResponseEntity<String> handleFraudDetected(FraudDetectedException ex) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public Map<String, String> handleFraudDetected(FraudDetectedException ex) {
+        Map<String, String> errorResponse = new HashMap<>();
+        errorResponse.put("message", ex.getMessage());
+        return errorResponse;
     }
 }

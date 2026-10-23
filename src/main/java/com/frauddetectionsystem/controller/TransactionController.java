@@ -1,8 +1,8 @@
-package com.frauddetectionsystem.Controller;
+package com.frauddetectionsystem.controller;
 
 import com.frauddetectionsystem.DTO.TransactionRequestDTO;
 import com.frauddetectionsystem.DTO.TransactionResponseDTO;
-import com.frauddetectionsystem.Service.TransactionService;
+import com.frauddetectionsystem.service.TransactionService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;

@@ -1,4 +1,4 @@
-package com.frauddetectionsystem.Service;
+package com.frauddetectionsystem.service;
 
 import com.frauddetectionsystem.DTO.AccountRequestDTO;
 import com.frauddetectionsystem.model.AccountModel;
